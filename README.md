@@ -1,5 +1,6 @@
 FakeSMTP
 ========
+Fork from: https://github.com/Nilhcem/FakeSMTP
 
 FakeSMTP is a Free Fake SMTP Server with GUI for testing emails in applications easily.
 It is written in Java.
@@ -20,7 +21,7 @@ It is licensed under the very free BSD or GPL license, whichever you prefer.
 Requirements
 ------------
 
-You need Java JVM 1.6 or newer installed on your machine.
+You need Java JVM 1.8 or newer installed on your machine.
 
 If you are on a "Unix-like" machine (Mac, GNU/Linux, BSD...), you may have
 to be "root" to start the port `25`, otherwise, try another port >= `1024`.
@@ -88,7 +89,7 @@ Building it
 You need to download and setup Maven.
 Once installed, go to project directory and run the following command:
 
-    mvn package -Dmaven.test.skip
+    mvn package -DskipTests
 
 This command will create an executable jar on the target folder.
 
@@ -122,44 +123,36 @@ Please note that it is better to have two different ports for unit and integrati
 Usage on Docker
 ---------------
 
-* Run distributed version: [Dockerfile](https://github.com/Nilhcem/FakeSMTP/blob/master/Dockerfile)
+Get sources from GitHub: [Dockerfile](https://github.com/chaerun/FakeSMTP/blob/master/src/main/docker/Dockerfile)
 
-      `docker build -t="mail" github.com/Nilhcem/FakeSMTP`
-
-      `docker run -ti -p 250:25 --privileged=true -v /mail:/output mail`
-
-
-* Build from source
-
-Get sources from GitHub: [Dockerfile](https://github.com/Nilhcem/FakeSMTP/blob/master/src/main/docker/Dockerfile)
-
-    git clone https://github.com/Nilhcem/FakeSMTP
+    git clone https://github.com/chaerun/FakeSMTP
     cd FakeSMTP
+
+Build the jar file
+
+    mvn package -DskipTests
 
 Build the docker image
 
-    mvn package docker:build -DskipTests
+    docker build -t chaerun/fakesmtp:2.2 -t chaerun/fakesmtp:latest .
 
 Run the docker image
 
-    docker run -ti -d fakesmtp
+    docker run -ti -d --name fakesmtp chaerun/fakesmtp
 
 Configure container
 
 * Map the SMTP port 25 to host:
 
-    `-p 250:25`
+    `-p 2525:25`
 
 * Map volume for received mails:
 
-    `--privileged=true  -v /mail-data:/output`
+    `--privileged=true -v /fakesmtp:/output`
 
 Full command
 
-* Foward fakesmtp:25 to host port 250,
-* mount host folder /home/fakesmtp/mail as container folder /output
-
-    `docker run -ti -d -p 250:25 --privileged=true -v /home/fakesmtp/mail:/output fakesmtp`
+    docker run -ti -d --name fakesmtp -p 2525:25 --privileged=true -v /fakesmtp:/output chaerun/fakesmtp
 
 
 Contact me
