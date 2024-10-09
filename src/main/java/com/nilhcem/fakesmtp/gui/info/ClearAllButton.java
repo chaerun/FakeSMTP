@@ -1,16 +1,16 @@
 package com.nilhcem.fakesmtp.gui.info;
 
+import java.awt.event.ActionEvent;
+import java.util.Observable;
+import java.util.Observer;
+
+import javax.swing.JButton;
+import javax.swing.JOptionPane;
+
 import com.nilhcem.fakesmtp.core.Configuration;
 import com.nilhcem.fakesmtp.core.I18n;
 import com.nilhcem.fakesmtp.server.MailSaver;
 import com.nilhcem.fakesmtp.server.SMTPServerHandler;
-
-import javax.swing.JButton;
-import javax.swing.JOptionPane;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.Observable;
-import java.util.Observer;
 
 /**
  * Button to clear all the information from the main panel.
@@ -24,8 +24,8 @@ import java.util.Observer;
  */
 public final class ClearAllButton extends Observable implements Observer {
 
-	private final I18n i18n = I18n.INSTANCE;
-	private final JButton button = new JButton(i18n.get("clearall.button"));
+	private static final I18n IL8N = I18n.INSTANCE;
+	private final JButton button = new JButton(IL8N.get("clearall.button"));
 
 	/**
 	 * Creates the "clear all" button"
@@ -36,29 +36,26 @@ public final class ClearAllButton extends Observable implements Observer {
 	 * </p>
 	 */
 	public ClearAllButton() {
-		button.setToolTipText(i18n.get("clearall.tooltip"));
-		button.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				int answer = JOptionPane.showConfirmDialog(button.getParent(), i18n.get("clearall.delete.email"),
-					String.format(i18n.get("clearall.title"), Configuration.INSTANCE.get("application.name")),
-						JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-				if (answer == JOptionPane.CLOSED_OPTION) {
-					return;
-				}
+	    button.setToolTipText(IL8N.get("clearall.tooltip"));
+	    button.addActionListener((ActionEvent e) -> {
+	        int answer = JOptionPane.showConfirmDialog(button.getParent(), IL8N.get("clearall.delete.email"),
+	                String.format(IL8N.get("clearall.title"), Configuration.INSTANCE.get("application.name")),
+	                JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+	        if (answer == JOptionPane.CLOSED_OPTION) {
+	            return;
+	        }
 
-				synchronized (SMTPServerHandler.INSTANCE.getMailSaver().getLock()) {
-				    // Note: Should delete emails before calling observers, since observers will clean the model.
-					if (answer == JOptionPane.YES_OPTION) {
-						SMTPServerHandler.INSTANCE.getMailSaver().deleteEmails();
-					}
-				    setChanged();
-				    notifyObservers();
-					button.setEnabled(false);
-				}
-			}
-		});
-		button.setEnabled(false);
+	        synchronized (SMTPServerHandler.INSTANCE.getMailSaver().getLock()) {
+	            // Note: Should delete emails before calling observers, since observers will clean the model.
+	            if (answer == JOptionPane.YES_OPTION) {
+	                SMTPServerHandler.INSTANCE.getMailSaver().deleteEmails();
+	            }
+	            setChanged();
+	            notifyObservers();
+	            button.setEnabled(false);
+	        }
+	    });
+	    button.setEnabled(false);
 	}
 
 	/**

@@ -1,7 +1,6 @@
 package com.nilhcem.fakesmtp.gui.info;
 
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -10,7 +9,10 @@ import javax.swing.JOptionPane;
 
 import com.nilhcem.fakesmtp.core.Configuration;
 import com.nilhcem.fakesmtp.core.I18n;
-import com.nilhcem.fakesmtp.core.exception.*;
+import com.nilhcem.fakesmtp.core.exception.BindPortException;
+import com.nilhcem.fakesmtp.core.exception.InvalidHostException;
+import com.nilhcem.fakesmtp.core.exception.InvalidPortException;
+import com.nilhcem.fakesmtp.core.exception.OutOfRangePortException;
 import com.nilhcem.fakesmtp.model.UIModel;
 
 /**
@@ -20,9 +22,9 @@ import com.nilhcem.fakesmtp.model.UIModel;
  * @since 1.0
  */
 public final class StartServerButton extends Observable implements Observer {
-	private final I18n i18n = I18n.INSTANCE;
-
-	private final JButton button = new JButton(i18n.get("startsrv.start"));
+	
+    private static final I18n IL8N = I18n.INSTANCE;
+	private final JButton button = new JButton(IL8N.get("startsrv.start"));
 
 	/**
 	 * Creates a start button to start the SMTP server.
@@ -31,12 +33,7 @@ public final class StartServerButton extends Observable implements Observer {
 	 * </p>
 	 */
 	public StartServerButton() {
-		button.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				toggleButton();
-			}
-		});
+		button.addActionListener((ActionEvent e) -> toggleButton());
 	}
 
 	/**
@@ -48,19 +45,19 @@ public final class StartServerButton extends Observable implements Observer {
 		try {
 			UIModel.INSTANCE.toggleButton();
 		} catch (InvalidHostException ihe) {
-			displayError(String.format(i18n.get("startsrv.err.invalidHost"), ihe.getHost()));
+			displayError(String.format(IL8N.get("startsrv.err.invalidHost"), ihe.getHost()));
 		} catch (InvalidPortException ipe) {
-			displayError(String.format(i18n.get("startsrv.err.invalidPort")));
+			displayError(String.format(IL8N.get("startsrv.err.invalidPort")));
 		} catch (BindPortException bpe) {
-			displayError(String.format(i18n.get("startsrv.err.bound"), bpe.getPort()));
+			displayError(String.format(IL8N.get("startsrv.err.bound"), bpe.getPort()));
 		} catch (OutOfRangePortException orpe) {
-			displayError(String.format(i18n.get("startsrv.err.range"), orpe.getPort()));
+			displayError(String.format(IL8N.get("startsrv.err.range"), orpe.getPort()));
 		} catch (RuntimeException re) {
-			displayError(String.format(i18n.get("startsrv.err.default"), re.getMessage()));
+			displayError(String.format(IL8N.get("startsrv.err.default"), re.getMessage()));
 		}
 
 		if (UIModel.INSTANCE.isStarted()) {
-			button.setText(i18n.get("startsrv.started"));
+			button.setText(IL8N.get("startsrv.started"));
 			button.setEnabled(false);
 		}
 		setChanged();
@@ -83,7 +80,7 @@ public final class StartServerButton extends Observable implements Observer {
 	 */
 	private void displayError(String error) {
 		JOptionPane.showMessageDialog(button.getParent(), error,
-			String.format(i18n.get("startsrv.err.title"), Configuration.INSTANCE.get("application.name")),
+			String.format(IL8N.get("startsrv.err.title"), Configuration.INSTANCE.get("application.name")),
 			JOptionPane.ERROR_MESSAGE);
 	}
 

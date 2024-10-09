@@ -1,21 +1,13 @@
 package com.nilhcem.fakesmtp.server;
 
-import com.nilhcem.fakesmtp.core.ArgsHandler;
-import com.nilhcem.fakesmtp.core.Configuration;
-import com.nilhcem.fakesmtp.core.I18n;
-import com.nilhcem.fakesmtp.model.EmailModel;
-import com.nilhcem.fakesmtp.model.UIModel;
-import org.apache.commons.io.FileUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.IOException;
 import java.io.StringReader;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -23,6 +15,15 @@ import java.util.Map;
 import java.util.Observable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.apache.commons.io.FileUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.nilhcem.fakesmtp.core.ArgsHandler;
+import com.nilhcem.fakesmtp.core.Configuration;
+import com.nilhcem.fakesmtp.model.EmailModel;
+import com.nilhcem.fakesmtp.model.UIModel;
 
 /**
  * Saves emails and notifies components so they can refresh their views with new data.
@@ -96,10 +97,8 @@ public final class MailSaver extends Observable {
 			File file = new File(value);
 			if (file.exists()) {
 				try {
-					if (!file.delete()) {
-						LOGGER.error("Impossible to delete file {}", value);
-					}
-				} catch (SecurityException e) {
+				    Files.delete(file.toPath());
+				} catch (IOException e) {
 					LOGGER.error("", e);
 				}
 			}
@@ -131,7 +130,7 @@ public final class MailSaver extends Observable {
 	 */
 	private String convertStreamToString(InputStream is) {
 		final long lineNbToStartCopy = 4; // Do not copy the first 4 lines (received part)
-		BufferedReader reader = new BufferedReader(new InputStreamReader(is, Charset.forName(I18n.UTF8)));
+		BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
 		StringBuilder sb = new StringBuilder();
 
 		String line;
@@ -176,7 +175,7 @@ public final class MailSaver extends Observable {
 
 		// Copy String to file
 		try {
-			FileUtils.writeStringToFile(file, mailContent);
+			FileUtils.writeStringToFile(file, mailContent, StandardCharsets.UTF_8);
 		} catch (IOException e) {
 			// If we can't save file, we display the error in the SMTP logs
 			Logger smtpLogger = LoggerFactory.getLogger(org.subethamail.smtp.server.Session.class);
