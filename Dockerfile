@@ -2,7 +2,7 @@ FROM eclipse-temurin:8u412-b08-jre
 
 RUN mkdir -p /output
 
-COPY target/*.jar /fakeSMTP.jar
+COPY target/executable/*.jar /fakeSMTP.jar
 
 VOLUME /output
 

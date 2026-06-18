@@ -51,8 +51,7 @@
             <version>2.17.0</version>
         </dependency>
 
-        <!-- Commons CLI: API for presenting, processing and validating a
-        command line interface -->
+        <!-- Commons CLI: API for presenting, processing and validating a command line interface -->
         <dependency>
             <groupId>commons-cli</groupId>
             <artifactId>commons-cli</artifactId>
@@ -134,23 +133,24 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
-                <version>2.5.4</version>
+                <version>3.6.0</version>
                 <configuration>
+                    <finalName>${project.build.finalName}</finalName>
+                    <attach>false</attach>
+                    <outputDirectory>${project.build.directory}/executable</outputDirectory>
                     <descriptorRefs>
                         <descriptorRef>jar-with-dependencies</descriptorRef>
                     </descriptorRefs>
                     <archive>
-                        <manifestFile>
-                            ${project.basedir}/src/main/resources/META-INF/MANIFEST.MF</manifestFile>
+                        <manifestFile>${project.basedir}/src/main/resources/META-INF/MANIFEST.MF</manifestFile>
                     </archive>
-                    <!-- Remove the "-jar-with-dependencies" at the end of the
-                    file -->
                     <appendAssemblyId>false</appendAssemblyId>
                 </configuration>
                 <executions>
                     <execution>
+                        <id>make-assembly</id>
                         <goals>
-                            <goal>attached</goal>
+                            <goal>single</goal>
                         </goals>
                         <phase>package</phase>
                     </execution>
@@ -279,8 +279,7 @@
                 <version>2.0</version>
             </plugin>
 
-            <!-- Generates a report on various tags found in the code, like 
-            @todo, TODO, @fixme, //FIXME tags. -->
+            <!-- Generates a report on various tags found in the code, like @todo, TODO, @fixme, //FIXME tags. -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>taglist-maven-plugin</artifactId>
